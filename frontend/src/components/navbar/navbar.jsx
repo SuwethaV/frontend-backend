@@ -1,55 +1,138 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
 
-function NavBar() {
+const pages = [
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact Us', path: '/form' }
+];
+
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+function NavBar() { 
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+  const handleCloseNavMenu = () => setAnchorElNav(null);
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+  const handleCloseUserMenu = () => setAnchorElUser(null);
+
   return (
-    <div 
-      style={{ 
-        width: "100%", // Full width
-        position: "fixed", // Fixed at the top
-        top: 0,
-        left: 0,
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        padding: "15px 30px", 
-        backgroundColor: "#333", 
-        color: "white",
-        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-        zIndex: 1000, // Ensures it stays above other content
-      }}
-    >
-      <div style={{ fontSize: "24px", fontWeight: "bold" }}>
-        React Router
-      </div>
+    <>
+    <AppBar position="fixed" sx={{ backgroundColor: 'blue' }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          {/* Logo */}
+          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
 
-      <div style={{ display: "flex", gap: "20px" }}>
-        <Link to="/" style={styles.link}>
-           Home
-        </Link>
-        <Link to="/about" style={styles.link}>
-          About Us
-        </Link>
-        <Link to="/form" style={styles.link}>
-          Form
-        </Link>
-        
-      </div>
-    </div>
+          {/* Mobile Menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorElNav}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {page.name}
+                  </Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+
+          {/* Desktop Menu - Aligned to Right */}
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
+            {pages.map((page) => (
+              <Button key={page.name} sx={{ my: 2, color: 'white' }}>
+                <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {page.name}
+                </Link>
+              </Button>
+            ))}
+          </Box>
+
+          {/* User Profile Menu */}
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              anchorEl={anchorElUser}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+
+    {/* CSS Fixes */}
+    <style>
+      {`
+        /* Fix content going behind navbar */
+        body {
+          padding-top: 64px;
+        }
+
+        @media(max-width: 768px){
+          .auth-container h1{
+            font-size : 20px;
+          }
+        }
+
+        @media (max-width: 500px){
+          .auth-container h1 {
+            font-size: 15px;
+          }
+        }
+      `}
+    </style>
+    </>
   );
 }
-
-const styles = {
-  link: {
-    textDecoration: "none",
-    color: "white",
-    fontSize: "18px",
-    display: "flex",
-    alignItems: "center",
-    gap: "5px",
-    padding: "5px 10px",
-    transition: "color 0.3s",
-  },
-};
 
 export default NavBar;

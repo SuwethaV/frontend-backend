@@ -11,9 +11,10 @@ app.use(cors());
 
 const db = mysql.createConnection({
     host: config.host,
-    user: config.username,
+    user: config.user,
     password: config.password,
     database: config.database,
+    dialect:config.dialect,
 });
 
 db.connect((err) => {
@@ -51,6 +52,44 @@ app.post("/users", (req, res) => {
         res.json({ message: "User added successfully", userId: result.insertId });
     });
 });
+// Update user details
+// Update user details
+app.put("/users/:id", (req, res) => {
+    const { name, email, dept } = req.body;
+    const userId = req.params.id; // user_id from the route parameters
+
+    if (!name || !email || !dept) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const sql = "UPDATE users SET name = ?, email = ?, department = ? WHERE user_id = ?";
+    db.query(sql, [name, email, dept, userId], (err, result) => {
+        if (err) {
+            console.error("Error updating data:", err);
+            return res.status(500).json({ error: "Database update failed" });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json({ message: "User updated successfully" });
+    });
+});
+
+
+// Delete user
+app.delete("/users/:id", (req, res) => {
+    const userId = req.params.id;
+    const sql = "DELETE FROM users WHERE user_id = ?";
+    db.query(sql, [userId], (err, result) => {
+        if (err) {
+            console.error("Error deleting data:", err);
+            return res.status(500).json({ error: "Database delete failed" });
+        }
+        res.json({ message: "User deleted successfully" });
+    });
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
